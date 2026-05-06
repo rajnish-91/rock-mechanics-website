@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Chapter 14 - Rheology & Creep</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+    <style>
+        .form-group { margin-bottom: 15px; }
+        .form-group label { font-weight: bold; display: block; margin-bottom: 5px; }
+        .form-group input, .form-group select { width: 100%; padding: 8px; box-sizing: border-box; }
+        .results-card { background-color: #f4e8f5; border: 2px solid #8e44ad; padding: 15px; border-radius: 8px; margin-top: 20px; color: #4a235a; font-size: 1.1em; line-height: 1.6; }
+        .solution-container { background: #fdfdfd; padding: 20px; border: 1px solid #ccc; border-radius: 8px; margin-top: 15px; font-size: 1.05em; color: #333; }
+        .formula-box { background: #eef2f5; padding: 10px; border-left: 4px solid #8e44ad; font-family: monospace; font-size: 1.1em; margin: 10px 0; overflow-x: auto; }
+        .input-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; background: #f1f3f5; padding: 15px; border-radius: 8px; margin-bottom: 20px; color: #333; }
+        .input-grid label { color: #333; }
+        .plot-container { background: white; padding: 15px; border-radius: 8px; border: 2px solid #e0c3e5; margin-top: 20px;}
+    </style>
+</head>
+<body class="chapter-creep-bg">
+<h1>Chapter 14: Rheological Models & Creep</h1>
+<a href="index.html" id="mainBackButton"><button style="margin-bottom: 20px;">⬅ Back to Home</button></a>
+
+<div class="container">
+
+    <div id="topicMenu">
+        <h2>Select Creep Analysis Tool:</h2>
+        <div class="topic-card" onclick="openInterface('empiricalCreepInterface')" style="border-left: 5px solid #004085;">
+            <h3>1. Empirical Creep Calculator (Stag's Equation)</h3><span>Open ➔</span>
+        </div>
+        <div class="topic-card" onclick="openInterface('rheologyPlotInterface')" style="border-left: 5px solid #8e44ad;">
+            <h3>2. Rheological Time-Strain Grapher</h3><span>Open ➔</span>
+        </div>
+    </div>
+
+    <div id="empiricalCreepInterface" class="calc-interface card">
+        <button class="btn-back-menu" onclick="closeInterface()">⬅ Back to Chapter 14 Menu</button>
+        <h2 style="color: #66b2ff;">Empirical Creep Rate (Stag's Equation)</h2>
+        <p><i>Calculates axial strain over time based on triaxial extension creep tests.</i></p>
+        <br>
+        
+        <div class="input-grid">
+            <div class="form-group"><label>Stress Difference (σ):</label><input type="number" id="c_sigma" placeholder="e.g. 50"></div>
+            <div class="form-group"><label>Time (t) in hours:</label><input type="number" id="c_t" placeholder="e.g. 100"></div>
+            
+            <div class="form-group"><label>Material Constant (K):</label><input type="number" id="c_k" placeholder="e.g. 0.0002"></div>
+            <div class="form-group"><label>Stress Exponent (n):</label><input type="number" id="c_n" placeholder="e.g. 1.5"></div>
+            <div class="form-group"><label>Time Exponent (m):</label><input type="number" id="c_m" placeholder="e.g. 0.4"></div>
+        </div>
+
+        <button class="btn-calc-green" onclick="calcEmpiricalCreep()">Calculate Creep Strain</button>
+        
+        <div id="c_resultsArea" style="display: none;">
+            <div id="c_resultsCard" class="results-card" style="border-color:#004085; background:#e6f2ff; color:#00264d;"></div>
+            <button class="btn-solution-pink" id="btnToggleC" onclick="toggleSolution('c_solutionCard', 'btnToggleC')" style="margin-top: 15px;">Show Equation Proof</button>
+            <div id="c_solutionCard" class="solution-container" style="display: none;"></div>
+        </div>
+    </div>
+
+    <div id="rheologyPlotInterface" class="calc-interface card">
+        <button class="btn-back-menu" onclick="closeInterface()">⬅ Back to Chapter 14 Menu</button>
+        <h2 style="color: #8e44ad;">Rheological Time-Strain Grapher</h2>
+        <p><i>Simulate Maxwell, Kelvin, and Burger models under constant stress.</i></p>
+        <br>
+        
+        <div class="input-grid">
+            <div class="form-group"><label>Applied Stress (σ) [MPa]:</label><input type="number" id="r_sigma" value="10"></div>
+            <div class="form-group"><label>Max Time to Plot (t) [Days]:</label><input type="number" id="r_tmax" value="100"></div>
+            
+            <div class="form-group"><label>Select Rheological Model:</label>
+                <select id="r_model" onchange="toggleModelInputs()">
+                    <option value="maxwell">Maxwell Model (Series)</option>
+                    <option value="kelvin">Kelvin / Voigt Model (Parallel)</option>
+                    <option value="burger" selected>Burger Model (Maxwell + Kelvin)</option>
+                </select>
+            </div>
+        </div>
+
+        <div id="maxwell_inputs" style="display: none; background: #fdfdfd; padding: 15px; border: 1px solid #ccc; margin-bottom:15px;">
+            <h4>Maxwell Parameters:</h4>
+            <div class="input-grid" style="margin-bottom:0;">
+                <div class="form-group"><label>Spring Constant (k):</label><input type="number" id="m_k" value="50"></div>
+                <div class="form-group"><label>Viscosity (η):</label><input type="number" id="m_eta" value="1000"></div>
+            </div>
+        </div>
+
+        <div id="kelvin_inputs" style="display: none; background: #fdfdfd; padding: 15px; border: 1px solid #ccc; margin-bottom:15px;">
+            <h4>Kelvin Parameters:</h4>
+            <div class="input-grid" style="margin-bottom:0;">
+                <div class="form-group"><label>Spring Constant (k):</label><input type="number" id="k_k" value="20"></div>
+                <div class="form-group"><label>Viscosity (η):</label><input type="number" id="k_eta" value="500"></div>
+            </div>
+        </div>
+
+        <div id="burger_inputs" style="background: #fdfdfd; padding: 15px; border: 1px solid #ccc; margin-bottom:15px;">
+            <h4>Burger Parameters (Matches your notes):</h4>
+            <div class="input-grid" style="margin-bottom:0;">
+                <div class="form-group"><label>Maxwell Spring (k2):</label><input type="number" id="b_k2" value="50"></div>
+                <div class="form-group"><label>Maxwell Viscosity (η2):</label><input type="number" id="b_eta2" value="2000"></div>
+                <div class="form-group"><label>Kelvin Spring (k1):</label><input type="number" id="b_k1" value="30"></div>
+                <div class="form-group"><label>Kelvin Viscosity (η1):</label><input type="number" id="b_eta1" value="800"></div>
+            </div>
+        </div>
+
+        <button class="btn-calc-green" onclick="drawRheologyCurve()" style="background-color: #8e44ad;">Plot Strain Curve</button>
+        
+        <div id="r_resultsArea" style="display: none;">
+            <div class="plot-container"><div id="rheologyPlot" style="width:100%; height:450px;"></div></div>
+            <div id="r_resultsCard" class="results-card"></div>
+        </div>
+    </div>
+
+</div>
+
+<script src="chapter14.js"></script>
+<script>
+    // Simple UI toggle for the input boxes
+    function toggleModelInputs() {
+        let model = document.getElementById("r_model").value;
+        document.getElementById("maxwell_inputs").style.display = model === 'maxwell' ? 'block' : 'none';
+        document.getElementById("kelvin_inputs").style.display = model === 'kelvin' ? 'block' : 'none';
+        document.getElementById("burger_inputs").style.display = model === 'burger' ? 'block' : 'none';
+    }
+</script>
+</body>
+</html>

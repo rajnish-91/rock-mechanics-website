@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Chapter 11 - Kirsch Solution</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .form-group { margin-bottom: 15px; }
+        .form-group label { font-weight: bold; display: block; margin-bottom: 5px; }
+        .form-group input, .form-group select { width: 100%; padding: 8px; box-sizing: border-box; }
+        .results-card { background-color: #e8f5e9; border: 2px solid #28a745; padding: 15px; border-radius: 8px; margin-top: 20px; color: #155724; font-size: 1.1em; line-height: 1.6; }
+        .solution-container { background: #fdfdfd; padding: 20px; border: 1px solid #ccc; border-radius: 8px; margin-top: 15px; font-size: 1.05em; color: #333; }
+        .formula-box { background: #eef2f5; padding: 10px; border-left: 4px solid #004085; font-family: monospace; font-size: 1.1em; margin: 10px 0; overflow-x: auto; white-space: nowrap; }
+        .input-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; background: #f1f3f5; padding: 15px; border-radius: 8px; margin-bottom: 20px; color: #333; }
+        .input-grid label { color: #333; }
+    </style>
+</head>
+<body class="chapter-tunnel-bg">
+<h1>Chapter 11: Kirsch Solution</h1>
+<a href="index.html" id="mainBackButton"><button style="margin-bottom: 20px;">⬅ Back to Home</button></a>
+
+<div class="container">
+
+    <div id="topicMenu">
+        <h2>Select Analysis Type:</h2>
+        <div class="topic-card" onclick="openInterface('insituKirschInterface')" style="border-left: 5px solid #28a745;">
+            <h3>1. Calculate Far-Field Stresses (p1 & p2)</h3><span>Open ➔</span>
+        </div>
+        <div class="topic-card" onclick="openInterface('generalKirschInterface')" style="border-left: 5px solid #004085;">
+            <h3>2. General Kirsch Equations (At distance r)</h3><span>Open ➔</span>
+        </div>
+        <div class="topic-card" onclick="openInterface('boundaryKirschInterface')" style="border-left: 5px solid #c82359;">
+            <h3>3. Boundary Stresses (At r = a)</h3><span>Open ➔</span>
+        </div>
+    </div>
+
+    <div id="insituKirschInterface" class="calc-interface card">
+        <button class="btn-back-menu" onclick="closeInterface()">⬅ Back to Chapter 11 Menu</button>
+        <h2 style="color: #28a745;">Determine Far-Field Stresses</h2>
+        <p><i>Calculate p1 and p2 based on the depth of the tunnel and rock properties.</i></p>
+        <br>
+        
+        <label><b>Geological Parameters:</b></label>
+        <div class="input-grid">
+            <div class="form-group"><label>Depth of Tunnel (z) [m]:</label><input type="number" id="i_z" placeholder="e.g. 500"></div>
+            <div class="form-group"><label>Unit Weight of Rock (γ) [MN/m³]:</label><input type="number" id="i_gamma" placeholder="e.g. 0.025"></div>
+            <div class="form-group" style="grid-column: span 2;">
+                <label>Horizontal Stress Ratio (K):</label>
+                <input type="number" id="i_k" placeholder="e.g. 1.2">
+                <p style="font-size: 0.85em; color: #666; margin-top: 5px; font-weight: normal;"><i>*Note: If unknown, K can be estimated as ν / (1 - ν)</i></p>
+            </div>
+        </div>
+
+        <button class="btn-calc-green" onclick="calcInSituKirsch()">Calculate p1 and p2</button>
+        
+        <div id="i_resultsArea" style="display: none;">
+            <div id="i_resultsCard" class="results-card"></div>
+        </div>
+    </div>
+
+    <div id="generalKirschInterface" class="calc-interface card">
+        <button class="btn-back-menu" onclick="closeInterface()">⬅ Back to Chapter 11 Menu</button>
+        <h2 style="color: #66b2ff;">General Kirsch Equations</h2>
+        <p><i>Calculate stresses at polar coordinates (r, θ) around a circular opening.</i></p>
+        <br>
+        
+        <label><b>Far-Field Applied Stresses:</b></label>
+        <div class="input-grid">
+            <div class="form-group"><label>Horizontal Stress (p1) [MPa]:</label><input type="number" id="k_p1" placeholder="e.g. 10"></div>
+            <div class="form-group"><label>Vertical Stress (p2) [MPa]:</label><input type="number" id="k_p2" placeholder="e.g. 25"></div>
+        </div>
+
+        <label><b>Opening & Point Geometry:</b></label>
+        <div class="input-grid">
+            <div class="form-group"><label>Radius of Opening (a) [m]:</label><input type="number" id="k_a" placeholder="e.g. 2"></div>
+            <div class="form-group"><label>Distance to Point (r) [m]:</label><input type="number" id="k_r" placeholder="e.g. 3"></div>
+            <div class="form-group" style="grid-column: span 2;"><label>Angle from Horizontal (θ) [Degrees]:</label><input type="number" id="k_theta" placeholder="e.g. 45"></div>
+        </div>
+
+        <button class="btn-calc-green" onclick="calcGeneralKirsch()">Calculate Local Stresses</button>
+        
+        <div id="k_resultsArea" style="display: none;">
+            <div id="k_resultsCard" class="results-card"></div>
+            <button class="btn-solution-pink" id="btnToggleK" onclick="toggleSolution('k_solutionCard', 'btnToggleK')" style="margin-top: 15px;">Show Equation Proof</button>
+            <div id="k_solutionCard" class="solution-container" style="display: none;"></div>
+        </div>
+    </div>
+
+    <div id="boundaryKirschInterface" class="calc-interface card">
+        <button class="btn-back-menu" onclick="closeInterface()">⬅ Back to Chapter 11 Menu</button>
+        <h2 style="color: #ff99cc;">Boundary Stresses (r = a)</h2>
+        <p><i>At the excavation boundary, radial and shear stresses are zero. Only tangential stress (σθ) exists.</i></p>
+        <br>
+        
+        <label><b>Far-Field Applied Stresses:</b></label>
+        <div class="input-grid">
+            <div class="form-group"><label>Horizontal Stress (p1) [MPa]:</label><input type="number" id="b_p1" placeholder="e.g. 10"></div>
+            <div class="form-group"><label>Vertical Stress (p2) [MPa]:</label><input type="number" id="b_p2" placeholder="e.g. 25"></div>
+            <div class="form-group" style="grid-column: span 2;"><label>Angle from Horizontal (θ) [Degrees]:</label><input type="number" id="b_theta" placeholder="e.g. 0 (Sidewall) or 90 (Roof)"></div>
+        </div>
+
+        <button class="btn-calc-green" onclick="calcBoundaryKirsch()">Calculate Boundary Stress</button>
+        
+        <div id="b_resultsArea" style="display: none;">
+            <div id="b_resultsCard" class="results-card"></div>
+            <button class="btn-solution-pink" id="btnToggleB" onclick="toggleSolution('b_solutionCard', 'btnToggleB')" style="margin-top: 15px;">Show Equation Proof</button>
+            <div id="b_solutionCard" class="solution-container" style="display: none;"></div>
+        </div>
+    </div>
+
+</div>
+
+<script src="chapter11.js"></script>
+</body>
+</html>

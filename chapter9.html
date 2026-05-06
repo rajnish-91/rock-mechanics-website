@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Chapter 9 - Constitutive Equations</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .form-group { margin-bottom: 15px; }
+        .form-group label { font-weight: bold; display: block; margin-bottom: 5px; }
+        .form-group input, .form-group select { width: 100%; padding: 8px; box-sizing: border-box; }
+        .results-card { background-color: #e8f5e9; border: 2px solid #28a745; padding: 15px; border-radius: 8px; margin-top: 20px; color: #155724; font-size: 1.1em; line-height: 1.6; }
+        .solution-container { background: #fdfdfd; padding: 20px; border: 1px solid #ccc; border-radius: 8px; margin-top: 15px; font-size: 1.05em; color: #333; }
+        .formula-box { background: #eef2f5; padding: 10px; border-left: 4px solid #004085; font-family: monospace; font-size: 1.1em; margin: 10px 0; }
+        .matrix-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px; background: #f1f3f5; padding: 15px; border-radius: 8px; margin-bottom: 20px; color: #333; }
+        .matrix-grid label { color: #333; }
+    </style>
+</head>
+<body class="chapter-strain-bg">
+<h1>Chapter 9: Constitutive Matrices</h1>
+<a href="index.html" id="mainBackButton"><button style="margin-bottom: 20px;">⬅ Back to Home</button></a>
+
+<div class="container">
+
+    <div id="topicMenu">
+        <h2>Select a Matrix Engine:</h2>
+        <div class="topic-card" onclick="openInterface('planeStressInterface')" style="border-left: 5px solid #004085;">
+            <h3>1. Plane Stress Matrix</h3><span>Open ➔</span>
+        </div>
+        <div class="topic-card" onclick="openInterface('planeStrainInterface')" style="border-left: 5px solid #c82359;">
+            <h3>2. Plane Strain Matrix</h3><span>Open ➔</span>
+        </div>
+    </div>
+
+    <div id="planeStressInterface" class="calc-interface card">
+        <button class="btn-back-menu" onclick="closeInterface()">⬅ Back to Chapter 9 Menu</button>
+        <h2 style="color: #66b2ff;">Plane Stress Relationship</h2>
+        <p><i>Used for thin plates where σz = τxz = τyz = 0. Converts strains to stresses.</i></p>
+        <br>
+        
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px;">
+            <div class="form-group"><label>Young's Modulus (E) in GPa:</label><input type="number" id="ps_E" placeholder="e.g. 200"></div>
+            <div class="form-group"><label>Poisson's Ratio (ν):</label><input type="number" id="ps_nu" placeholder="e.g. 0.3"></div>
+        </div>
+
+        <label><b>Input Strains (Unitless):</b></label>
+        <div class="matrix-grid">
+            <div class="form-group"><label>εx:</label><input type="number" id="ps_ex" placeholder="e.g. 0.002"></div>
+            <div class="form-group"><label>εy:</label><input type="number" id="ps_ey" placeholder="e.g. -0.001"></div>
+            <div class="form-group"><label>γxy:</label><input type="number" id="ps_gxy" placeholder="e.g. 0.0015"></div>
+        </div>
+
+        <button class="btn-calc-green" onclick="calcPlaneStress()">Calculate Stresses</button>
+        
+        <div id="ps_resultsArea" style="display: none;">
+            <div id="ps_resultsCard" class="results-card"></div>
+            <button class="btn-solution-pink" id="btnTogglePS" onclick="toggleSolution('ps_solutionCard', 'btnTogglePS')" style="margin-top: 15px;">Show Matrix Proof</button>
+            <div id="ps_solutionCard" class="solution-container" style="display: none;"></div>
+        </div>
+    </div>
+
+    <div id="planeStrainInterface" class="calc-interface card">
+        <button class="btn-back-menu" onclick="closeInterface()">⬅ Back to Chapter 9 Menu</button>
+        <h2 style="color: #ff99cc;">Plane Strain Relationship</h2>
+        <p><i>Used for long/thick bodies where εz = γxz = γyz = 0. Converts strains to stresses.</i></p>
+        <br>
+        
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px;">
+            <div class="form-group"><label>Young's Modulus (E) in GPa:</label><input type="number" id="pt_E" placeholder="e.g. 200"></div>
+            <div class="form-group"><label>Poisson's Ratio (ν):</label><input type="number" id="pt_nu" placeholder="e.g. 0.3"></div>
+        </div>
+
+        <label><b>Input Strains (Unitless):</b></label>
+        <div class="matrix-grid">
+            <div class="form-group"><label>εx:</label><input type="number" id="pt_ex" placeholder="e.g. 0.002"></div>
+            <div class="form-group"><label>εy:</label><input type="number" id="pt_ey" placeholder="e.g. -0.001"></div>
+            <div class="form-group"><label>γxy:</label><input type="number" id="pt_gxy" placeholder="e.g. 0.0015"></div>
+        </div>
+
+        <button class="btn-calc-green" onclick="calcPlaneStrain()">Calculate Stresses</button>
+        
+        <div id="pt_resultsArea" style="display: none;">
+            <div id="pt_resultsCard" class="results-card"></div>
+            <button class="btn-solution-pink" id="btnTogglePT" onclick="toggleSolution('pt_solutionCard', 'btnTogglePT')" style="margin-top: 15px;">Show Matrix Proof</button>
+            <div id="pt_solutionCard" class="solution-container" style="display: none;"></div>
+        </div>
+    </div>
+
+</div>
+
+<script src="chapter9.js"></script>
+</body>
+</html>

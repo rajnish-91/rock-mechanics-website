@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Chapter 8 - Strain Transformation</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+    <style>
+        .form-group { margin-bottom: 15px; }
+        .form-group label { font-weight: bold; display: block; margin-bottom: 5px; }
+        .form-group input, .form-group select { width: 100%; padding: 8px; box-sizing: border-box; }
+        .results-card { background-color: #e8f5e9; border: 2px solid #28a745; padding: 15px; border-radius: 8px; margin-top: 20px; color: #155724; font-size: 1.1em; line-height: 1.6; }
+        .solution-container { background: #fdfdfd; padding: 20px; border: 1px solid #ccc; border-radius: 8px; margin-top: 15px; font-size: 1.05em; color: #333; }
+        .formula-box { background: #eef2f5; padding: 10px; border-left: 4px solid #004085; font-family: monospace; font-size: 1.1em; margin: 10px 0; }
+        .plot-container { background: white; padding: 15px; border-radius: 8px; border: 2px solid #b8daff; margin-top: 20px;}
+    </style>
+</head>
+<body class="chapter-strain-bg">
+<h1>Chapter 8: Strain Transformation</h1>
+<a href="index.html" id="mainBackButton"><button style="margin-bottom: 20px;">⬅ Back to Home</button></a>
+
+<div class="container">
+
+    <div id="topicMenu">
+        <h2>Select a Tool:</h2>
+        <div class="topic-card" onclick="openInterface('planeStrainInterface')" style="border-left: 5px solid #004085;">
+            <h3>1. Plane Strain Transformation</h3><span>Open ➔</span>
+        </div>
+        <div class="topic-card" onclick="openInterface('principalStrainInterface')" style="border-left: 5px solid #28a745;">
+            <h3>2. Principal Strains (Max & Min)</h3><span>Open ➔</span>
+        </div>
+        <div class="topic-card" onclick="openInterface('mohrStrainInterface')" style="border-left: 5px solid #c82359;">
+            <h3>3. Interactive Mohr's Circle (Strain)</h3><span>Open ➔</span>
+        </div>
+    </div>
+
+    <div id="planeStrainInterface" class="calc-interface card">
+        <button class="btn-back-menu" onclick="closeInterface()">⬅ Back to Chapter 8 Menu</button>
+        <h2 style="color: #004085;">Plane Strain Transformation</h2>
+        <p><i>Calculate strain components on an element rotated by angle θ.</i></p>
+        <br>
+        
+        <div class="form-group"><label>Normal Strain in X (εx):</label><input type="number" id="t_ex" placeholder="e.g. 0.002"></div>
+        <div class="form-group"><label>Normal Strain in Y (εy):</label><input type="number" id="t_ey" placeholder="e.g. -0.001"></div>
+        <div class="form-group"><label>Shear Strain (γxy):</label><input type="number" id="t_gxy" placeholder="e.g. 0.003"></div>
+        <div class="form-group"><label>Rotation Angle θ (in degrees):</label><input type="number" id="t_theta" placeholder="e.g. 30"></div>
+
+        <button class="btn-calc-green" onclick="calcStrainTransformation()">Calculate</button>
+        
+        <div id="t_resultsArea" style="display: none;">
+            <div id="t_resultsCard" class="results-card"></div>
+            <button class="btn-solution-pink" id="btnToggleT" onclick="toggleSolution('t_solutionCard', 'btnToggleT')" style="margin-top: 15px;">Show Full Proof</button>
+            <div id="t_solutionCard" class="solution-container" style="display: none;"></div>
+        </div>
+    </div>
+
+    <div id="principalStrainInterface" class="calc-interface card">
+        <button class="btn-back-menu" onclick="closeInterface()">⬅ Back to Chapter 8 Menu</button>
+        <h2 style="color: #28a745;">Principal Strains & Max Shear</h2>
+        <br>
+        
+        <div class="form-group"><label>Normal Strain in X (εx):</label><input type="number" id="p_ex" placeholder="e.g. 0.002"></div>
+        <div class="form-group"><label>Normal Strain in Y (εy):</label><input type="number" id="p_ey" placeholder="e.g. -0.001"></div>
+        <div class="form-group"><label>Shear Strain (γxy):</label><input type="number" id="p_gxy" placeholder="e.g. 0.003"></div>
+
+        <button class="btn-calc-green" onclick="calcPrincipalStrains()">Calculate</button>
+        
+        <div id="p_resultsArea" style="display: none;">
+            <div id="p_resultsCard" class="results-card"></div>
+            <button class="btn-solution-pink" id="btnToggleP" onclick="toggleSolution('p_solutionCard', 'btnToggleP')" style="margin-top: 15px;">Show Full Proof</button>
+            <div id="p_solutionCard" class="solution-container" style="display: none;"></div>
+        </div>
+    </div>
+
+    <div id="mohrStrainInterface" class="calc-interface card">
+        <button class="btn-back-menu" onclick="closeInterface()">⬅ Back to Chapter 8 Menu</button>
+        <h2 style="color: #c82359;">Mohr's Circle for Strain</h2>
+        <p><i>Note: The vertical axis plots half-shear strain (γ/2).</i></p>
+        <br>
+        
+        <div class="form-group"><label>Normal Strain in X (εx):</label><input type="number" id="m_ex" placeholder="e.g. 800"></div>
+        <div class="form-group"><label>Normal Strain in Y (εy):</label><input type="number" id="m_ey" placeholder="e.g. 200"></div>
+        <div class="form-group"><label>Shear Strain (γxy):</label><input type="number" id="m_gxy" placeholder="e.g. 600"></div>
+        <div class="form-group">
+            <label>Units Multiplier (Optional label):</label>
+            <select id="m_unit"><option value="µ">Micro-strain (µ)</option><option value="">Unitless</option></select>
+        </div>
+
+        <button class="btn-calc-green" onclick="drawStrainMohrCircle()">Plot Mohr's Circle</button>
+
+        <div id="m_outputArea" style="display: none;">
+            <div class="plot-container"><div id="strainMohrPlot" style="width:100%; height:500px;"></div></div>
+            <div id="m_resultsCard" class="results-card" style="margin-top: 20px;"></div>
+        </div>
+    </div>
+
+</div>
+
+<script src="chapter8.js"></script>
+</body>
+</html>

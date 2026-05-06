@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Chapter 10 - Strain Rosettes</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .form-group { margin-bottom: 15px; }
+        .form-group label { font-weight: bold; display: block; margin-bottom: 5px; }
+        .form-group input, .form-group select { width: 100%; padding: 8px; box-sizing: border-box; }
+        .results-card { background-color: #e8f5e9; border: 2px solid #28a745; padding: 15px; border-radius: 8px; margin-top: 20px; color: #155724; font-size: 1.1em; line-height: 1.6; }
+        .solution-container { background: #fdfdfd; padding: 20px; border: 1px solid #ccc; border-radius: 8px; margin-top: 15px; font-size: 1.05em; color: #333; }
+        .formula-box { background: #eef2f5; padding: 10px; border-left: 4px solid #004085; font-family: monospace; font-size: 1.1em; margin: 10px 0; }
+        .material-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; background: #f1f3f5; padding: 15px; border-radius: 8px; margin-bottom: 20px; color: #333; }
+        .material-grid label { color: #333; }
+    </style>
+</head>
+<body class="chapter-strain-bg">
+<h1>Chapter 10: Strain Rosettes</h1>
+<a href="index.html" id="mainBackButton"><button style="margin-bottom: 20px;">⬅ Back to Home</button></a>
+
+<div class="container">
+
+    <div id="topicMenu">
+        <h2>Select Rosette Type:</h2>
+        <div class="topic-card" onclick="openInterface('rectRosetteInterface')" style="border-left: 5px solid #004085;">
+            <h3>1. Rectangular Rosette (x, y, & θ)</h3><span>Open ➔</span>
+        </div>
+        <div class="topic-card" onclick="openInterface('deltaRosetteInterface')" style="border-left: 5px solid #c82359;">
+            <h3>2. Delta (Δ) Rosette (0°, 60°, 120°)</h3><span>Open ➔</span>
+        </div>
+    </div>
+
+    <div id="rectRosetteInterface" class="calc-interface card">
+        <button class="btn-back-menu" onclick="closeInterface()">⬅ Back to Chapter 10 Menu</button>
+        <h2 style="color: #66b2ff;">Rectangular Rosette Analysis</h2>
+        <p><i>As per notes: εx and εy are known directly. A third gauge ε' is at angle θ.</i></p>
+        <br>
+        
+        <label><b>Material Properties:</b></label>
+        <div class="material-grid">
+            <div class="form-group"><label>Young's Modulus (E) in GPa:</label><input type="number" id="r_E" placeholder="e.g. 200"></div>
+            <div class="form-group"><label>Poisson's Ratio (μ):</label><input type="number" id="r_nu" placeholder="e.g. 0.3"></div>
+        </div>
+
+        <div class="form-group"><label>Strain Gauge 1 (εx) along 0°:</label><input type="number" id="r_ex" placeholder="e.g. 0.0004"></div>
+        <div class="form-group"><label>Strain Gauge 2 (εy) along 90°:</label><input type="number" id="r_ey" placeholder="e.g. -0.0002"></div>
+        <div class="form-group"><label>Strain Gauge 3 (ε') at Angle θ:</label><input type="number" id="r_etheta" placeholder="e.g. 0.00015"></div>
+        <div class="form-group"><label>Angle θ (in degrees):</label><input type="number" id="r_theta" placeholder="e.g. 45"></div>
+
+        <button class="btn-calc-green" onclick="calcRectRosette()">Calculate Principal Strains & Stresses</button>
+        
+        <div id="r_resultsArea" style="display: none;">
+            <div id="r_resultsCard" class="results-card"></div>
+            <button class="btn-solution-pink" id="btnToggleR" onclick="toggleSolution('r_solutionCard', 'btnToggleR')" style="margin-top: 15px;">Show Calculation Proof</button>
+            <div id="r_solutionCard" class="solution-container" style="display: none;"></div>
+        </div>
+    </div>
+
+    <div id="deltaRosetteInterface" class="calc-interface card">
+        <button class="btn-back-menu" onclick="closeInterface()">⬅ Back to Chapter 10 Menu</button>
+        <h2 style="color: #ff99cc;">Delta (Δ) Rosette Analysis</h2>
+        <p><i>Gauges are arranged in a star/delta pattern at 0°, 60°, and 120°.</i></p>
+        <br>
+        
+        <label><b>Material Properties:</b></label>
+        <div class="material-grid">
+            <div class="form-group"><label>Young's Modulus (E) in GPa:</label><input type="number" id="d_E" placeholder="e.g. 200"></div>
+            <div class="form-group"><label>Poisson's Ratio (μ):</label><input type="number" id="d_nu" placeholder="e.g. 0.3"></div>
+        </div>
+
+        <div class="form-group"><label>Strain Gauge 1 (ε_0) at 0°:</label><input type="number" id="d_e0" placeholder="e.g. 0.0005"></div>
+        <div class="form-group"><label>Strain Gauge 2 (ε_60) at 60°:</label><input type="number" id="d_e60" placeholder="e.g. 0.0003"></div>
+        <div class="form-group"><label>Strain Gauge 3 (ε_120) at 120°:</label><input type="number" id="d_e120" placeholder="e.g. -0.0001"></div>
+
+        <button class="btn-calc-green" onclick="calcDeltaRosette()">Calculate Principal Strains & Stresses</button>
+        
+        <div id="d_resultsArea" style="display: none;">
+            <div id="d_resultsCard" class="results-card"></div>
+            <button class="btn-solution-pink" id="btnToggleD" onclick="toggleSolution('d_solutionCard', 'btnToggleD')" style="margin-top: 15px;">Show Calculation Proof</button>
+            <div id="d_solutionCard" class="solution-container" style="display: none;"></div>
+        </div>
+    </div>
+
+</div>
+
+<script src="chapter10.js"></script>
+</body>
+</html>

@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title> 3D Stress Analysis</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .form-group { margin-bottom: 15px; }
+        .form-group label { font-weight: bold; display: block; margin-bottom: 5px; }
+        .form-group input, .form-group select { width: 100%; padding: 8px; box-sizing: border-box; }
+        
+        .matrix-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 15px;
+            background: #7e127e;
+            padding: 15px;
+            border: 1px dashed #ccc;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+
+<body class="chapter-stress-bg">
+
+<h1> 3D Stress Analysis</h1>
+
+<a href="index.html"><button style="width:auto; margin-bottom: 20px;">⬅ Back</button></a>
+
+<div class="container">
+    
+    <div class="card" style="padding: 30px;">
+        <h2>3D Stress Invariants & Principal Stresses</h2>
+        <p><i>Enter the 6 independent components of the 3D stress tensor.</i></p>
+        <br>
+        
+        <div class="matrix-grid">
+            <div class="form-group"><label>σxx:</label><input type="number" id="sxx" placeholder="e.g. 50"></div>
+            <div class="form-group"><label>τxy:</label><input type="number" id="txy" placeholder="e.g. 20"></div>
+            <div class="form-group"><label>τzx:</label><input type="number" id="tzx" placeholder="e.g. 10"></div>
+            
+            <div class="form-group"><label>τxy:</label><input type="number" disabled placeholder="Symmetric" style="background:#e9ecef;"></div>
+            <div class="form-group"><label>σyy:</label><input type="number" id="syy" placeholder="e.g. -10"></div>
+            <div class="form-group"><label>τyz:</label><input type="number" id="tyz" placeholder="e.g. -30"></div>
+
+            <div class="form-group"><label>τzx:</label><input type="number" disabled placeholder="Symmetric" style="background:#e9ecef;"></div>
+            <div class="form-group"><label>τyz:</label><input type="number" disabled placeholder="Symmetric" style="background:#e9ecef;"></div>
+            <div class="form-group"><label>σzz:</label><input type="number" id="szz" placeholder="e.g. 40"></div>
+        </div>
+
+        <div class="form-group">
+            <label>Units:</label>
+            <select id="stressUnit">
+                <option value="MPa">MPa</option><option value="kPa">kPa</option><option value="Pa">Pa</option>
+            </select>
+        </div>
+
+        <button class="btn-calc-green" onclick="calculate3DStress()">Calculate 3D State</button>
+
+        <div id="resultsCard" class="results-card" style="display: none;">
+            <h2>Analysis Results</h2>
+            <p id="basicResults" style="font-size: 1.1em; line-height: 1.6;"></p>
+            <button id="btnToggle" class="btn-solution-pink" onclick="toggleSolution()">Show Full Solution Steps</button>
+        </div>
+
+        <div id="solutionCard" class="solution-container" style="display: none;"></div>
+    </div>
+
+</div>
+
+<script src="chapter5.js"></script>
+
+</body>
+</html>

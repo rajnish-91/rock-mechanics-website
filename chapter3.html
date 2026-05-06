@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Chapter 3 - Plane Stress Transformation</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .form-group { margin-bottom: 15px; }
+        .form-group label { font-weight: bold; display: block; margin-bottom: 5px; }
+        .form-group input, .form-group select { width: 100%; padding: 8px; box-sizing: border-box; }
+    </style>
+</head>
+<body class="chapter-mohr-bg">
+<h1> Stress Transformation</h1>
+<a href="index.html" id="mainBackButton"><button style="margin-bottom: 20px;">⬅ Back to Home</button></a>
+
+<div class="container">
+
+    <div id="topicMenu">
+        <h2>Select a Tool:</h2>
+        
+        <div class="topic-card" onclick="openInterface('transformInterface')">
+            <h3>Plane Stress Transformation</h3><span>Open ➔</span>
+        </div>
+        <div class="topic-card" onclick="openInterface('principalInterface')">
+            <h3>Principal Stresses & Max Shear</h3><span>Open ➔</span>
+        </div>
+    </div>
+
+    <div id="transformInterface" class="calc-interface card">
+        <button class="btn-back-menu" onclick="closeInterface()">⬅ Back to Chapter 3 Menu</button>
+        <h2 style="color: #004085;">Plane Stress Transformation</h2>
+        <br>
+        <div class="form-group"><label>σx (Normal Stress on x-axis):</label><input type="number" id="sx"></div>
+        <div class="form-group"><label>σy (Normal Stress on y-axis):</label><input type="number" id="sy"></div>
+        <div class="form-group"><label>τxy (Shear Stress):</label><input type="number" id="txy"></div>
+        <div class="form-group"><label>θ (Angle in degrees):</label><input type="number" id="theta"></div>
+        <div class="form-group">
+            <label>Units:</label>
+            <select id="stressUnit"><option value="MPa">MPa</option><option value="kPa">kPa</option></select>
+        </div>
+
+        <button class="btn-calc-green" onclick="calculateTransformation()">Calculate</button>
+
+        <div id="resultsCard" class="results-card" style="display: none;">
+            <h2>Results</h2>
+            <p id="basicResults" style="font-size: 1.1em; line-height: 1.6;"></p>
+            <button id="btnToggle" class="btn-solution-pink" onclick="toggleSolution()">Show Full Solution</button>
+        </div>
+        <div id="solutionCard" class="solution-container" style="display: none;"></div>
+    </div>
+
+    <div id="principalInterface" class="calc-interface card">
+        <button class="btn-back-menu" onclick="closeInterface()">⬅ Back to Chapter 3 Menu</button>
+        <h2 style="color: #004085;">Principal Stresses & Max Shear</h2>
+        <br>
+        <div class="form-group"><label>σx (Normal Stress on x-axis):</label><input type="number" id="p_sx"></div>
+        <div class="form-group"><label>σy (Normal Stress on y-axis):</label><input type="number" id="p_sy"></div>
+        <div class="form-group"><label>τxy (Shear Stress):</label><input type="number" id="p_txy"></div>
+        <div class="form-group">
+            <label>Units:</label>
+            <select id="p_stressUnit"><option value="MPa">MPa</option><option value="kPa">kPa</option></select>
+        </div>
+
+        <button class="btn-calc-green" onclick="calculatePrincipal()">Calculate</button>
+
+        <div id="p_resultsCard" class="results-card" style="display: none;">
+            <h2>Results</h2>
+            <p id="p_basicResults" style="font-size: 1.1em; line-height: 1.6;"></p>
+            <button id="p_btnToggle" class="btn-solution-pink" onclick="togglePrincipalSolution()">Show Full Solution</button>
+        </div>
+        <div id="p_solutionCard" class="solution-container" style="display: none;"></div>
+    </div>
+
+</div>
+<script src="chapter3.js"></script>
+</body>
+</html>

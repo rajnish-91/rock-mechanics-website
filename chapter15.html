@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Chapter 15 - Failure Criteria</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+    <style>
+        .form-group { margin-bottom: 15px; }
+        .form-group label { font-weight: bold; display: block; margin-bottom: 5px; font-size: 0.95em; }
+        .form-group input, .form-group select { width: 100%; padding: 8px; box-sizing: border-box; }
+        .results-card { background-color: #fdf2f2; border: 2px solid #dc3545; padding: 15px; border-radius: 8px; margin-top: 20px; color: #721c24; font-size: 1.1em; line-height: 1.6; }
+        .solution-container { background: #fdfdfd; padding: 20px; border: 1px solid #ccc; border-radius: 8px; margin-top: 15px; font-size: 1.05em; color: #333; }
+        .formula-box { background: #eef2f5; padding: 10px; border-left: 4px solid #dc3545; font-family: monospace; font-size: 1.1em; margin: 10px 0; overflow-x: auto; white-space: nowrap; }
+        .input-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; background: #f1f3f5; padding: 15px; border-radius: 8px; margin-bottom: 20px; color: #333; }
+        .input-grid label { color: #333; }
+        .plot-container { background: white; padding: 15px; border-radius: 8px; border: 2px solid #f5c6cb; margin-top: 20px;}
+        
+        /* Specific styling to color-code Hoek-Brown inputs vs results */
+        .hoek-title { color: #8e44ad !important; }
+        .hoek-results { background-color: #f4e8f5; border-color: #8e44ad; color: #4a235a; }
+        .btn-hoek { background-color: #8e44ad !important; }
+        .formula-hoek { border-left-color: #8e44ad; }
+        
+        .info-box { background: #fff3cd; color: #856404; padding: 10px; border-left: 4px solid #ffeeba; margin-bottom: 15px; font-size: 0.9em; }
+    </style>
+</head>
+<body class="chapter-failure-bg">
+<h1>Chapter 15: Rock Failure Criteria</h1>
+<a href="index.html" id="mainBackButton"><button style="margin-bottom: 20px;">⬅ Back to Home</button></a>
+
+<div class="container">
+
+    <div id="topicMenu">
+        <h2>Select Failure Model:</h2>
+        <div class="topic-card" onclick="openInterface('mohrCoulombInterface')" style="border-left: 5px solid #dc3545;">
+            <h3>1. Mohr-Coulomb (Classic Linear)</h3><span>Open ➔</span>
+        </div>
+        <div class="topic-card" onclick="openInterface('hoekBrownInterface')" style="border-left: 5px solid #8e44ad;">
+            <h3>2. Hoek-Brown (Nonlinear Envelope)</h3><span>Open ➔</span>
+        </div>
+    </div>
+
+    <div id="mohrCoulombInterface" class="calc-interface card">
+        <button class="btn-back-menu" onclick="closeInterface()">⬅ Back to Chapter 15 Menu</button>
+        <h2 style="color: #dc3545;">Mohr-Coulomb Failure Analysis</h2>
+        <p><i>Calculates shear strength and plots the linear failure envelope (τ = σ tan(φ) + c).</i></p>
+        <br>
+        
+        <label><b>Rock Mass Properties (c & φ from GSI or Lab):</b></label>
+        <div class="input-grid">
+            <div class="form-group"><label>Cohesion (c) [MPa]:</label><input type="number" id="f_c" placeholder="e.g. 5"></div>
+            <div class="form-group"><label>Internal Friction Angle (φ) [Degrees]:</label><input type="number" id="f_phi" placeholder="e.g. 30"></div>
+        </div>
+
+        <label><b>Applied Stress State:</b></label>
+        <div class="input-grid">
+            <div class="form-group"><label>Applied Normal Stress (σ) [MPa]:</label><input type="number" id="f_sigma" placeholder="e.g. 15"></div>
+            <div class="form-group">
+                <label>Applied Shear Stress (τ) [MPa] (Optional):</label>
+                <input type="number" id="f_tau" placeholder="Leave blank for only strength">
+            </div>
+        </div>
+
+        <button class="btn-calc-green" onclick="calcMohrCoulomb()" style="background-color: #dc3545;">Evaluate Linear Failure</button>
+        
+        <div id="f_resultsArea" style="display: none;">
+            <div id="f_resultsCard" class="results-card"></div>
+            
+            <div class="plot-container"><div id="failurePlot" style="width:100%; height:450px;"></div></div>
+
+            <button class="btn-solution-pink" id="btnToggleF" onclick="toggleSolution('f_solutionCard', 'btnToggleF')" style="margin-top: 15px;">Show Equation Proof</button>
+            <div id="f_solutionCard" class="solution-container" style="display: none;"></div>
+        </div>
+    </div>
+
+    <div id="hoekBrownInterface" class="calc-interface card">
+        <button class="btn-back-menu" onclick="closeInterface()">⬅ Back to Chapter 15 Menu</button>
+        <h2 class="hoek-title">Generalized Hoek-Brown (Nonlinear) Envelope</h2>
+        <p><i>Generates the curved failure envelope tangent to several Mohr circles (Plots τ vs σn).</i></p>
+        <br>
+        
+        <label><b>Input Parameters (Unconfined Compression & Shape Constants):</b></label>
+        <div class="info-box">These parameters are derived from UCS lab tests and rock mass ratings (like GSI and distruption factor D).</div>
+        <div class="input-grid">
+            <div class="form-group"><label>Intact Rock Strength (σci) [MPa]:</label><input type="number" id="h_sci" value="100"></div>
+            <div class="form-group"><label>Generalized Parameter (mb):</label><input type="number" id="h_mb" value="4.5"></div>
+            
+            <div class="form-group"><label>Fractured Parameter (s):</label><input type="number" id="h_s" value="0.005"></div>
+            <div class="form-group"><label>Curvature Parameter (a):</label><input type="number" id="h_a" value="0.502"></div>
+        </div>
+
+        <button class="btn-calc-green btn-hoek" onclick="calcHoekBrown()">Plot Non-Linear Envelope</button>
+        
+        <div id="h_resultsArea" style="display: none;">
+            <div id="h_resultsCard" class="results-card hoek-results"></div>
+            
+            <div class="plot-container"><div id="hoekPlot" style="width:100%; height:500px;"></div></div>
+
+            <button class="btn-solution-pink btn-hoek" id="btnToggleH" onclick="toggleSolution('h_solutionCard', 'btnToggleH')" style="margin-top: 15px;">Show Complex Solution Proof</button>
+            <div id="h_solutionCard" class="solution-container" style="display: none;"></div>
+        </div>
+    </div>
+
+</div>
+
+<script src="chapter15.js"></script>
+</body>
+</html>

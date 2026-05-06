@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Chapter 12 - Elliptical Openings</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .form-group { margin-bottom: 15px; }
+        .form-group label { font-weight: bold; display: block; margin-bottom: 5px; }
+        .form-group input, .form-group select { width: 100%; padding: 8px; box-sizing: border-box; }
+        .results-card { background-color: #e8f5e9; border: 2px solid #28a745; padding: 15px; border-radius: 8px; margin-top: 20px; color: #155724; font-size: 1.1em; line-height: 1.6; }
+        .solution-container { background: #fdfdfd; padding: 20px; border: 1px solid #ccc; border-radius: 8px; margin-top: 15px; font-size: 1.05em; color: #333; }
+        .formula-box { background: #eef2f5; padding: 10px; border-left: 4px solid #004085; font-family: monospace; font-size: 1.1em; margin: 10px 0; overflow-x: auto; white-space: nowrap; }
+        .input-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; background: #f1f3f5; padding: 15px; border-radius: 8px; margin-bottom: 20px; color: #333; }
+        .input-grid label { color: #333; }
+    </style>
+</head>
+<body class="chapter-tunnel-bg">
+<h1>Chapter 12: Elliptical Openings</h1>
+<a href="index.html" id="mainBackButton"><button style="margin-bottom: 20px;">⬅ Back to Home</button></a>
+
+<div class="container">
+
+    <div id="topicMenu">
+        <h2>Select Analysis Type:</h2>
+        <div class="topic-card" onclick="openInterface('ellipticalBoundaryInterface')" style="border-left: 5px solid #004085;">
+            <h3>1. Elliptical Boundary Stresses (Sidewall & Roof)</h3><span>Open ➔</span>
+        </div>
+    </div>
+
+    <div id="ellipticalBoundaryInterface" class="calc-interface card">
+        <button class="btn-back-menu" onclick="closeInterface()">⬅ Back to Chapter 12 Menu</button>
+        <h2 style="color: #66b2ff;">Boundary Stresses for Elliptical Openings</h2>
+        <p><i>Calculates stresses at the sidewall (Point A) and crown/roof (Point B).</i></p>
+        <br>
+        
+        <label><b>Far-Field Applied Stresses:</b></label>
+        <div class="input-grid">
+            <div class="form-group"><label>Vertical Stress (p) [MPa]:</label><input type="number" id="e_p" placeholder="e.g. 20"></div>
+            <div class="form-group"><label>Horizontal Stress Ratio (K):</label><input type="number" id="e_k" placeholder="e.g. 0.5"></div>
+        </div>
+
+        <label><b>Opening Geometry:</b></label>
+        <div class="input-grid">
+            <div class="form-group"><label>Width of Opening (W) [m]:</label><input type="number" id="e_w" placeholder="e.g. 6"></div>
+            <div class="form-group"><label>Height of Opening (H) [m]:</label><input type="number" id="e_h" placeholder="e.g. 3"></div>
+        </div>
+
+        <button class="btn-calc-green" onclick="calcEllipticalStresses()">Calculate Boundary Stresses</button>
+        
+        <div id="e_resultsArea" style="display: none;">
+            <div id="e_resultsCard" class="results-card"></div>
+            <button class="btn-solution-pink" id="btnToggleE" onclick="toggleSolution('e_solutionCard', 'btnToggleE')" style="margin-top: 15px;">Show Equation Proof</button>
+            <div id="e_solutionCard" class="solution-container" style="display: none;"></div>
+        </div>
+    </div>
+
+</div>
+
+<script src="chapter12.js"></script>
+</body>
+</html>

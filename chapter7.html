@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title> Hooke's Law</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+    <style>
+        .form-group { margin-bottom: 15px; }
+        .form-group label { font-weight: bold; display: block; margin-bottom: 5px; }
+        .form-group input, .form-group select { width: 100%; padding: 8px; box-sizing: border-box; }
+        .canvas-container { text-align: center; margin-top: 20px; background-color: white; border: 2px solid #b8daff; border-radius: 8px; padding: 15px; overflow-x: auto; color: #333;}
+        canvas { background-color: #f8f9fa; border-radius: 4px; border: 1px dashed #ccc; margin-bottom: 10px; }
+        
+        /* Added color: #333 to force dark text inside the light grid */
+        .matrix-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 15px; background: #f1f3f5; padding: 15px; border-radius: 8px; margin-bottom: 20px; color: #333; }
+        .matrix-grid label { color: #333; } /* Forces labels to be dark */
+    </style>
+</head>
+<body class="chapter-strain-bg">
+<h1> Hooke's Law</h1>
+<a href="index.html" id="mainBackButton"><button style="margin-bottom: 20px;">⬅ Back to Home</button></a>
+
+<div class="container">
+
+    <div id="topicMenu">
+        <h2>Select a Tool:</h2>
+        <div class="topic-card" onclick="openInterface('hooke3dInterface')" style="border-left: 5px solid #66b2ff;">
+            <h3>1. Generalized 3D Hooke's Law (Math Engine)</h3><span>Open ➔</span>
+        </div>
+        <div class="topic-card" onclick="openInterface('poissonVisInterface')" style="border-left: 5px solid #85e085;">
+            <h3>2. Poisson Effect Visualizer</h3><span>Open ➔</span>
+        </div>
+        <div class="topic-card" onclick="openInterface('stressStrainPlotInterface')" style="border-left: 5px solid #ff99cc;">
+            <h3>3. Elastic Stress-Strain Grapher</h3><span>Open ➔</span>
+        </div>
+    </div>
+
+    <div id="hooke3dInterface" class="calc-interface card">
+        <button class="btn-back-menu" onclick="closeInterface()">⬅ Back to Chapter 7 Menu</button>
+        <h2 style="color: #99c2ff;">Generalized 3D Hooke's Law</h2>
+        <p><i>Calculates multi-directional strains caused by the Poisson effect.</i></p>
+        <br>
+        
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px;">
+            <div class="form-group"><label>Young's Modulus (E) in GPa:</label><input type="number" id="h_E" placeholder="e.g. 50"></div>
+            <div class="form-group"><label>Poisson's Ratio (ν):</label><input type="number" id="h_nu" placeholder="e.g. 0.25"></div>
+        </div>
+
+        <label><b>Applied Normal Stresses (in MPa):</b></label>
+        <div class="matrix-grid">
+            <div class="form-group"><label>σx:</label><input type="number" id="h_sx" placeholder="0"></div>
+            <div class="form-group"><label>σy:</label><input type="number" id="h_sy" placeholder="-10"></div>
+            <div class="form-group"><label>σz:</label><input type="number" id="h_sz" placeholder="0"></div>
+        </div>
+
+        <button class="btn-calc-green" onclick="calculate3DHooke()">Calculate Principal Strains</button>
+        <div id="hooke3dResults" class="results-card" style="display: none; margin-top: 20px; color: #333;"></div>
+    </div>
+
+    <div id="poissonVisInterface" class="calc-interface card">
+        <button class="btn-back-menu" onclick="closeInterface()">⬅ Back to Chapter 7 Menu</button>
+        <h2 style="color: #85e085;">Poisson Effect Visualizer</h2>
+        <br>
+        
+        <div style="background: #f1f3f5; padding: 15px; border-radius: 8px; color: #333;">
+            <div class="form-group"><label style="color: #333;">Applied Axial Stress (σy) in MPa:</label><input type="number" id="v_sy" value="-100"></div>
+            <div class="form-group"><label style="color: #333;">Young's Modulus (E) in GPa:</label><input type="number" id="v_E" value="50"></div>
+            <div class="form-group"><label style="color: #333;">Poisson's Ratio (ν):</label><input type="number" id="v_nu" value="0.3"></div>
+            <button class="btn-calc-green" onclick="drawPoissonEffect()">Simulate Deformation</button>
+        </div>
+
+        <div class="canvas-container">
+            <canvas id="poissonCanvas" width="500" height="400"></canvas>
+            <p id="poissonResult" style="font-weight: bold; font-size: 1.1em; color: #333;"></p>
+        </div>
+    </div>
+
+    <div id="stressStrainPlotInterface" class="calc-interface card">
+        <button class="btn-back-menu" onclick="closeInterface()">⬅ Back to Chapter 7 Menu</button>
+        <h2 style="color: #ff99cc;">Elastic Stress-Strain Curve</h2>
+        <br>
+        
+        <div class="form-group"><label>Young's Modulus (E) in GPa:</label><input type="number" id="p_E" value="70"></div>
+        <div class="form-group"><label>Yield Strength (σ_y) in MPa:</label><input type="number" id="p_yield" value="250"></div>
+        <button class="btn-calc-green" onclick="drawStressStrainGraph()">Plot Graph</button>
+
+        <div id="ssOutputArea" style="display: none; margin-top: 20px;">
+            <div style="background: white; padding: 15px; border-radius: 8px; border: 2px solid #b8daff; color: #333;">
+                <div id="ssPlot" style="width:100%; height:450px;"></div>
+            </div>
+            <p id="ssResult" class="results-card" style="margin-top: 15px; color: #333;"></p>
+        </div>
+    </div>
+
+</div>
+
+<script src="chapter7.js"></script>
+</body>
+</html>

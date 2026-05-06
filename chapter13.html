@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Chapter 13 - Rock Mass Classification</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .form-group { margin-bottom: 15px; }
+        .form-group label { font-weight: bold; display: block; margin-bottom: 5px; }
+        .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 8px; box-sizing: border-box; font-family: inherit; }
+        .results-card { background-color: #e8f5e9; border: 2px solid #28a745; padding: 15px; border-radius: 8px; margin-top: 20px; color: #155724; font-size: 1.1em; line-height: 1.6; }
+        .solution-container { background: #fdfdfd; padding: 20px; border: 1px solid #ccc; border-radius: 8px; margin-top: 15px; font-size: 1.05em; color: #333; }
+        .formula-box { background: #eef2f5; padding: 10px; border-left: 4px solid #004085; font-family: monospace; font-size: 1.1em; margin: 10px 0; overflow-x: auto; }
+        .info-box { background: #fff3cd; color: #856404; padding: 10px; border-left: 4px solid #ffeeba; margin-bottom: 15px; font-size: 0.9em; }
+        .input-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; background: #f1f3f5; padding: 15px; border-radius: 8px; margin-bottom: 20px; color: #333; }
+        .input-grid label { color: #333; }
+    </style>
+</head>
+<body class="chapter-core-bg">
+<h1>Chapter 13: Rock Mass Classification (RQD & Q-System)</h1>
+<a href="index.html" id="mainBackButton"><button style="margin-bottom: 20px;">⬅ Back to Home</button></a>
+
+<div class="container">
+
+    <div id="topicMenu">
+        <h2>Step 1: Calculate RQD</h2>
+        <div class="topic-card" onclick="openInterface('deereInterface')" style="border-left: 5px solid #004085;">
+            <h3>1. Deere's Method (Core Logging)</h3><span>Open ➔</span>
+        </div>
+        <div class="topic-card" onclick="openInterface('palmstromInterface')" style="border-left: 5px solid #c82359;">
+            <h3>2. Palmström's Method (Volumetric Joint Count)</h3><span>Open ➔</span>
+        </div>
+        
+        <h2 style="margin-top: 20px;">Step 2: Q-System & Support Design</h2>
+        <div class="topic-card" onclick="openInterface('qIndexInterface')" style="border-left: 5px solid #28a745;">
+            <h3>3. Calculate Rock Mass Quality (Q)</h3><span>Open ➔</span>
+        </div>
+        <div class="topic-card" onclick="openInterface('supportInterface')" style="border-left: 5px solid #ff9900;">
+            <h3>4. Tunnel Support Design (Bolts & Span)</h3><span>Open ➔</span>
+        </div>
+    </div>
+
+    <div id="deereInterface" class="calc-interface card">
+        <button class="btn-back-menu" onclick="closeInterface()">⬅ Back to Chapter 13 Menu</button>
+        <h2 style="color: #66b2ff;">Deere's Method (Drill Core)</h2>
+        <p><i>Calculates RQD by summing core pieces greater than 10 cm.</i></p>
+        <div class="info-box">Ensure all inputs are in centimeters (cm).</div>
+        
+        <div class="form-group">
+            <label>Total Length of Core Run [cm]:</label>
+            <input type="number" id="rqd_total_len" placeholder="e.g. 200">
+        </div>
+        
+        <div class="form-group">
+            <label>Lengths of Intact Core Pieces [cm]:</label>
+            <textarea id="rqd_pieces" rows="3" placeholder="Enter pieces separated by commas (e.g. 38, 17, 5, 0, 20, 35)"></textarea>
+            <p style="font-size: 0.85em; color: #666; margin-top: 5px;"><i>The calculator will automatically filter out pieces 10 cm or smaller.</i></p>
+        </div>
+
+        <button class="btn-calc-green" onclick="calcDeereRQD()">Calculate RQD</button>
+        
+        <div id="rqd_resultsArea" style="display: none;">
+            <div id="rqd_resultsCard" class="results-card"></div>
+            <button class="btn-solution-pink" id="btnToggleRQD" onclick="toggleSolution('rqd_solutionCard', 'btnToggleRQD')" style="margin-top: 15px;">Show Calculation Proof</button>
+            <div id="rqd_solutionCard" class="solution-container" style="display: none;"></div>
+        </div>
+    </div>
+
+    <div id="palmstromInterface" class="calc-interface card">
+        <button class="btn-back-menu" onclick="closeInterface()">⬅ Back to Chapter 13 Menu</button>
+        <h2 style="color: #ff99cc;">Palmström's Method (Jv)</h2>
+        <p><i>Estimates RQD for clay-free rock masses from surface exposures.</i></p>
+        <br>
+        
+        <div class="form-group">
+            <label>Volumetric Joint Count (Jv) [joints/m³]:</label>
+            <input type="number" id="p_jv" placeholder="e.g. 15">
+        </div>
+
+        <button class="btn-calc-green" onclick="calcPalmstromRQD()">Estimate RQD</button>
+        
+        <div id="p_resultsArea" style="display: none;">
+            <div id="p_resultsCard" class="results-card"></div>
+            <button class="btn-solution-pink" id="btnToggleP" onclick="toggleSolution('p_solutionCard', 'btnToggleP')" style="margin-top: 15px;">Show Equation Proof</button>
+            <div id="p_solutionCard" class="solution-container" style="display: none;"></div>
+        </div>
+    </div>
+
+    <div id="qIndexInterface" class="calc-interface card">
+        <button class="btn-back-menu" onclick="closeInterface()">⬅ Back to Chapter 13 Menu</button>
+        <h2 style="color: #85e085;">Rock Tunneling Quality Index (Q)</h2>
+        <p><i>Evaluates rock mass characteristics based on the 6 Barton parameters.</i></p>
+        <br>
+        
+        <div class="input-grid">
+            <div class="form-group"><label>RQD (Rock Quality Designation) [%]:</label><input type="number" id="q_rqd" placeholder="e.g. 75"></div>
+            <div class="form-group"><label>Jn (Joint Set Number):</label><input type="number" id="q_jn" placeholder="e.g. 9"></div>
+            
+            <div class="form-group"><label>Jr (Joint Roughness Number):</label><input type="number" id="q_jr" placeholder="e.g. 1.5"></div>
+            <div class="form-group"><label>Ja (Joint Alteration Number):</label><input type="number" id="q_ja" placeholder="e.g. 2.0"></div>
+            
+            <div class="form-group"><label>Jw (Joint Water Reduction Factor):</label><input type="number" id="q_jw" placeholder="e.g. 1.0"></div>
+            <div class="form-group"><label>SRF (Stress Reduction Factor):</label><input type="number" id="q_srf" placeholder="e.g. 1.0"></div>
+        </div>
+
+        <button class="btn-calc-green" onclick="calcQIndex()">Calculate Q-Value</button>
+        
+        <div id="q_resultsArea" style="display: none;">
+            <div id="q_resultsCard" class="results-card"></div>
+            <button class="btn-solution-pink" id="btnToggleQ" onclick="toggleSolution('q_solutionCard', 'btnToggleQ')" style="margin-top: 15px;">Show Equation Proof</button>
+            <div id="q_solutionCard" class="solution-container" style="display: none;"></div>
+        </div>
+    </div>
+
+    <div id="supportInterface" class="calc-interface card">
+        <button class="btn-back-menu" onclick="closeInterface()">⬅ Back to Chapter 13 Menu</button>
+        <h2 style="color: #ffcc66;">Excavation Support Design</h2>
+        <p><i>Estimates rockbolt length and maximum unsupported span.</i></p>
+        <br>
+        
+        <div class="input-grid">
+            <div class="form-group"><label>Rock Mass Quality (Q):</label><input type="number" id="s_q" placeholder="e.g. 4.5"></div>
+            <div class="form-group"><label>Excavation Width (B) [m]:</label><input type="number" id="s_b" placeholder="e.g. 10"></div>
+            <div class="form-group" style="grid-column: span 2;">
+                <label>Excavation Support Ratio (ESR):</label>
+                <input type="number" id="s_esr" placeholder="e.g. 1.6">
+            </div>
+        </div>
+
+        <button class="btn-calc-green" onclick="calcSupportDesign()">Calculate Support Requirements</button>
+        
+        <div id="s_resultsArea" style="display: none;">
+            <div id="s_resultsCard" class="results-card"></div>
+            <button class="btn-solution-pink" id="btnToggleS" onclick="toggleSolution('s_solutionCard', 'btnToggleS')" style="margin-top: 15px;">Show Equation Proof</button>
+            <div id="s_solutionCard" class="solution-container" style="display: none;"></div>
+        </div>
+    </div>
+
+</div>
+
+<script src="chapter13.js"></script>
+</body>
+</html>

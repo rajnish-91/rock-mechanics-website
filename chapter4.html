@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Chapter 4 - Interactive Mohr's Circle</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+    <style>
+        .form-group { margin-bottom: 15px; }
+        .form-group label { font-weight: bold; display: block; margin-bottom: 5px; }
+        .form-group input, .form-group select { width: 100%; padding: 8px; box-sizing: border-box; }
+        .canvas-container {
+            margin-top: 20px;
+            padding: 10px;
+        }
+    </style>
+</head>
+
+<body class="chapter-mohr-bg">
+
+<h1>Chapter 4: Mohr's Circle Construction</h1>
+<a href="index.html" id="mainBackButton"><button style="margin-bottom: 20px;">⬅ Back to Home</button></a>
+
+<div class="container">
+
+    <div id="topicMenu">
+        <h2>Select a Tool:</h2>
+        <div class="topic-card" onclick="openInterface('mohrPlotInterface')">
+            <h3>Interactive Mohr's Circle Generator</h3><span>Open ➔</span>
+        </div>
+    </div>
+
+    <div id="mohrPlotInterface" class="calc-interface card" style="padding: 30px;">
+        <button class="btn-back-menu" onclick="closeInterface()">⬅ Back to Chapter 4 Menu</button>
+        <h2>Interactive Mohr's Circle Generator</h2>
+        <br>
+        
+        <div class="form-group"><label>σx (Normal Stress on x-axis):</label><input type="number" id="m_sx" placeholder="e.g. 64"></div>
+        <div class="form-group"><label>σy (Normal Stress on y-axis):</label><input type="number" id="m_sy" placeholder="e.g. 32"></div>
+        <div class="form-group"><label>τxy (Shear Stress):</label><input type="number" id="m_txy" placeholder="e.g. 24"></div>
+        <div class="form-group">
+            <label>Units:</label>
+            <select id="m_stressUnit">
+                <option value="MPa">MPa</option><option value="kPa">kPa</option><option value="Pa">Pa</option>
+            </select>
+        </div>
+
+        <button class="btn-calc-green" onclick="drawMohrCircle()">Construct Mohr's Circle</button>
+
+        <div id="m_resultsCard" class="results-card" style="display: none;">
+            <h2>Geometry Results</h2>
+            <p id="m_basicResults" style="font-size: 1.1em; line-height: 1.6;"></p>
+            
+            <div class="canvas-container">
+                <div id="mohrPlot" style="width:100%; height:500px;"></div>
+            </div>
+
+            <button id="m_btnToggle" class="btn-solution-pink" onclick="toggleMohrSolution()">Show Full Proof</button>
+        </div>
+        <div id="m_solutionCard" class="solution-container" style="display: none;"></div>
+    </div>
+
+</div>
+
+<script src="chapter4.js"></script>
+</body>
+</html>

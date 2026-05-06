@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Chapter 1 - Stress</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .input-group { display: flex; gap: 10px; margin-bottom: 15px; }
+        .input-group input { flex: 1; }
+        .input-group select { width: 100px; }
+        p[id$="Result"] {
+            font-size: 1.5em; font-weight: 800;
+            padding: 15px; border-radius: 8px;
+            text-align: center; border: 2px solid #b8daff; margin-top: 20px;
+        }
+    </style>
+</head>
+<body class="chapter-stress-bg">
+
+<h1>Chapter 1: Stress</h1>
+<a href="index.html" id="mainBackButton"><button style="margin-bottom: 20px;">⬅ Back to Home</button></a>
+
+<div class="container">
+    <div id="topicMenu">
+        <h2>Select a Calculator:</h2>
+        <div class="topic-card" onclick="openInterface('basicStressInterface')">
+            <h3>Basic Stress (Normal & Shear)</h3>
+            <span>Open ➔</span>
+        </div>
+        <div class="topic-card" onclick="openInterface('insituStressInterface')">
+            <h3>In-Situ Stress (Depth Based)</h3>
+            <span>Open ➔</span>
+        </div>
+    </div>
+
+    <div id="basicStressInterface" class="calc-interface card">
+        <button class="btn-back-menu" onclick="closeInterface()">⬅ Back to Chapter 1 Menu</button>
+        <h2>Basic Stress Calculator</h2>
+        <br>
+        <label>Stress Type:</label>
+        <select id="basicStressType" onchange="updateBasicInputs()">
+            <option value="normal">Normal Stress (σ)</option>
+            <option value="shear">Shear Stress (τ)</option>
+        </select><br><br>
+
+        <label>Solve for:</label>
+        <select id="basicSolveFor" onchange="updateBasicInputs()">
+            <option value="stress">Stress (F/A)</option>
+            <option value="force">Force (Stress × Area)</option>
+            <option value="area">Area (Force / Stress)</option>
+        </select><br><br>
+
+        <div id="basicInputs"></div>
+        <button class="btn-calc-green" onclick="calcBasic()">Calculate Answer</button>
+        <p id="basicResult"></p>
+    </div>
+
+    <div id="insituStressInterface" class="calc-interface card">
+        <button class="btn-back-menu" onclick="closeInterface()">⬅ Back to Chapter 1 Menu</button>
+        <h2>In-Situ Stress Calculator</h2>
+        <br>
+        <label>Relationship:</label>
+        <select id="insituRelationship" onchange="updateInsituSolveFor()">
+            <option value="gamma">Vertical Stress (σv = γz)</option>
+            <option value="rho">Vertical Stress (σv = ρgz)</option>
+            <option value="horizontal">Horizontal Stress (σh = Kσv)</option>
+            <option value="poisson">Stress Ratio (K₀ = ν / (1-ν))</option>
+        </select><br><br>
+
+        <label>Solve for:</label>
+        <select id="insituSolveFor" onchange="updateInsituInputs()"></select><br><br>
+
+        <div id="insituInputs"></div>
+        <button class="btn-calc-green" onclick="calcInsitu()">Calculate Answer</button>
+        <p id="insituResult"></p>
+    </div>
+
+</div>
+
+<script src="chapter1.js"></script>
+</body>
+</html>

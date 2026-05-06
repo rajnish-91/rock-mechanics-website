@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Chapter 2 - Strain & Elasticity</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .input-group { display: flex; gap: 10px; margin-bottom: 15px; }
+        .input-group input { flex: 1; }
+        .input-group select { width: 100px; }
+        p[id$="Result"] {
+            font-size: 1.5em; font-weight: 800; color: #004085; 
+            background-color: #cce5ff; padding: 15px; border-radius: 8px; 
+            text-align: center; border: 2px solid #b8daff; margin-top: 20px;
+        }
+        .canvas-container {
+            text-align: center; margin-top: 15px; background-color: white;
+            border: 2px solid #b8daff; border-radius: 8px; padding: 15px; overflow-x: auto; 
+        }
+        canvas {
+            background-color: #f8f9fa; border-radius: 4px; border: 1px dashed #ccc; margin-bottom: 10px;
+        }
+        .form-group { margin-bottom: 15px; }
+        .form-group label { font-weight: bold; display: block; margin-bottom: 5px; }
+        .form-group input, .form-group select { width: 100%; padding: 8px; box-sizing: border-box; }
+    </style>
+</head>
+<body class="chapter-strain-bg">
+<h1>Chapter 2: Strain & Elasticity</h1>
+<a href="index.html" id="mainBackButton"><button style="margin-bottom: 20px;">⬅ Back to Home</button></a>
+
+<div class="container">
+
+    <div id="topicMenu">
+        <h2>Select a Tool:</h2>
+        
+        <div class="topic-card" onclick="openInterface('visNormalInterface')" style="border-left: 5px solid #28a745;">
+            <h3>1. Normal Strain Visualizer</h3><span>Open ➔</span>
+        </div>
+        <div class="topic-card" onclick="openInterface('visShearInterface')" style="border-left: 5px solid #004085;">
+            <h3>2. Shear Strain Visualizer</h3><span>Open ➔</span>
+        </div>
+        <div class="topic-card" onclick="openInterface('calcStrainInterface')">
+            <h3>3. Strain Calculations</h3><span>Open ➔</span>
+        </div>
+        <div class="topic-card" onclick="openInterface('calcModInterface')">
+            <h3>4. Elastic Modulus Calculator</h3><span>Open ➔</span>
+        </div>
+        <div class="topic-card" onclick="openInterface('calcPoissonInterface')">
+            <h3>5. Poisson Ratio Calculator</h3><span>Open ➔</span>
+        </div>
+        <div class="topic-card" onclick="openInterface('calcRelInterface')">
+            <h3>6. Elastic Relationships</h3><span>Open ➔</span>
+        </div>
+    </div>
+
+    <div id="visNormalInterface" class="calc-interface card">
+        <button class="btn-back-menu" onclick="closeInterface()">⬅ Back to Chapter 2 Menu</button>
+        <h2 style="color: #28a745;">Normal Strain (Linear)</h2>
+        <div class="form-group">
+            <label>Input Mode:</label>
+            <select id="v_norm_mode" onchange="updateNormalVisInputs()">
+                <option value="find_strain">Give ΔL, Find Strain</option>
+                <option value="find_dl">Give Strain, Find ΔL</option>
+            </select>
+        </div>
+        <div id="v_norm_input_area"></div>
+        <button class="btn-calc-green" onclick="drawNormalStrain()">Simulate</button>
+        <div class="canvas-container">
+            <canvas id="normalCanvas" width="550" height="220"></canvas>
+            <p id="normalResult" style="font-weight: bold; font-size: 1.1em; color: #333; margin: 0;"></p>
+        </div>
+    </div>
+
+    <div id="visShearInterface" class="calc-interface card">
+        <button class="btn-back-menu" onclick="closeInterface()">⬅ Back to Chapter 2 Menu</button>
+        <h2 style="color: #004085;">Shear Strain (Angular)</h2>
+        <div class="form-group">
+            <label>Input Mode:</label>
+            <select id="v_shear_mode" onchange="updateShearVisInputs()">
+                <option value="find_strain">Give ΔL, Find Strain</option>
+                <option value="find_dl">Give Strain, Find ΔL</option>
+            </select>
+        </div>
+        <div id="v_shear_input_area"></div>
+        <button class="btn-calc-green" onclick="drawShearStrain()">Simulate</button>
+        <div class="canvas-container">
+            <canvas id="shearCanvas" width="550" height="220"></canvas>
+            <p id="shearResult" style="font-weight: bold; font-size: 1.1em; color: #333; margin: 0;"></p>
+        </div>
+    </div>
+
+    <div id="calcStrainInterface" class="calc-interface card">
+        <button class="btn-back-menu" onclick="closeInterface()">⬅ Back to Chapter 2 Menu</button>
+        <h2 style="color: #004085;">Strain Calculations</h2>
+        <label>Strain Type:</label>
+        <select id="strainType" onchange="updateStrainSolveFor()">
+            <option value="linear">Linear Strain (ε)</option>
+            <option value="volumetric">Volumetric Strain (εv)</option>
+        </select><br><br>
+        <label>Solve for:</label>
+        <select id="strainSolveFor" onchange="updateStrainInputs()"></select><br><br>
+        <div id="strainInputs"></div>
+        <button class="btn-calc-green" onclick="calcStrain()">Calculate</button>
+        <p id="strainResult"></p>
+    </div>
+
+    <div id="calcModInterface" class="calc-interface card">
+        <button class="btn-back-menu" onclick="closeInterface()">⬅ Back to Chapter 2 Menu</button>
+        <h2 style="color: #004085;">Elastic Modulus</h2>
+        <label>Modulus Type:</label>
+        <select id="modType" onchange="updateModSolveFor()">
+            <option value="young">Young's Modulus (E)</option>
+            <option value="shear">Shear Modulus (G)</option>
+            <option value="bulk">Bulk Modulus (K)</option>
+        </select><br><br>
+        <label>Solve for:</label>
+        <select id="modSolveFor" onchange="updateModInputs()"></select><br><br>
+        <div id="modInputs"></div>
+        <button class="btn-calc-green" onclick="calcMod()">Calculate</button>
+        <p id="modResult"></p>
+    </div>
+
+    <div id="calcPoissonInterface" class="calc-interface card">
+        <button class="btn-back-menu" onclick="closeInterface()">⬅ Back to Chapter 2 Menu</button>
+        <h2 style="color: #004085;">Poisson Ratio</h2>
+        <label>Solve for:</label>
+        <select id="poissonSolveFor" onchange="updatePoissonInputs()">
+            <option value="nu">Poisson Ratio (ν = ε_lat / ε_long)</option>
+            <option value="lat">Lateral Strain (ε_lat = ν × ε_long)</option>
+            <option value="long">Longitudinal Strain (ε_long = ε_lat / ν)</option>
+        </select><br><br>
+        <div id="poissonInputs"></div>
+        <button class="btn-calc-green" onclick="calcPoisson()">Calculate</button>
+        <p id="poissonResult"></p>
+    </div>
+
+    <div id="calcRelInterface" class="calc-interface card">
+        <button class="btn-back-menu" onclick="closeInterface()">⬅ Back to Chapter 2 Menu</button>
+        <h2 style="color: #004085;">Elastic Relationships</h2>
+        <label>Relationship:</label>
+        <select id="relType" onchange="updateRelSolveFor()">
+            <option value="EG">E, G, and ν</option>
+            <option value="EK">E, K, and ν</option>
+        </select><br><br>
+        <label>Solve for:</label>
+        <select id="relSolveFor" onchange="updateRelInputs()"></select><br><br>
+        <div id="relInputs"></div>
+        <button class="btn-calc-green" onclick="calcRelation()">Calculate</button>
+        <p id="relResult"></p>
+    </div>
+
+</div>
+<script src="chapter2.js"></script>
+</body>
+</html>
