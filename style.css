@@ -79,10 +79,12 @@ body::before {
 /* ================= TITLE ================= */
 h1 {
     max-width: 1180px;
-    margin: 0 auto;
-    padding: 30px 20px 12px;
+    margin: 0 auto 24px;
+    padding: 24px 28px;
     color: #fff7eb;
-    text-shadow: 0 3px 12px rgba(0, 0, 0, 0.78);
+    background: rgba(0, 0, 0, 0.45);
+    border-radius: 16px;
+    text-shadow: 0 6px 22px rgba(0, 0, 0, 0.72);
     font-size: clamp(2rem, 4vw, 3.5rem);
     line-height: 1.05;
     text-align: left;
@@ -92,6 +94,7 @@ h1 {
 h2,
 h3 {
     color: #fff1d6;
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.35);
 }
 
 /* ================= MAIN CONTAINER ================= */
@@ -193,8 +196,8 @@ button {
     min-height: 42px;
     margin-top: 12px;
     padding: 10px 16px;
-    color: #1a1712;
-    background: var(--primary);
+    color: #ffffff;
+    background: rgba(217, 144, 47, 0.96);
     border: 1px solid transparent;
     border-radius: 6px;
     cursor: pointer;
@@ -218,9 +221,10 @@ a {
 a button {
     margin-left: 20px;
     margin-top: 14px;
-    color: #fff4df;
-    background: rgba(18, 27, 33, 0.82);
-    border: 1px solid var(--line);
+    color: #ffffff;
+    background: rgba(16, 25, 33, 0.90);
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    box-shadow: 0 8px 18px rgba(0, 0, 0, 0.22);
 }
 
 a button:hover {
@@ -233,10 +237,16 @@ body > .card a button {
     height: 100%;
     min-height: 58px;
     margin: 0;
-    color: #fff4df;
-    background: rgba(30, 39, 45, 0.78);
-    border: 1px solid var(--line);
+    color: #ffffff;
+    background: rgba(14, 22, 30, 0.94);
+    border: 1px solid rgba(255, 255, 255, 0.14);
     text-align: left;
+    padding: 16px 18px;
+    font-size: 1rem;
+}
+
+body.site-home-bg > .card a button {
+    font-weight: 500;
 }
 
 body > .card a button:hover {

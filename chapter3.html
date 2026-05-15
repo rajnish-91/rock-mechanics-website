@@ -7,6 +7,26 @@
         .form-group { margin-bottom: 15px; }
         .form-group label { font-weight: bold; display: block; margin-bottom: 5px; }
         .form-group input, .form-group select { width: 100%; padding: 8px; box-sizing: border-box; }
+        .alignment-diagram {
+            margin-top: 18px;
+            padding: 14px;
+            background: #fffdf7;
+            border: 1px solid #b8daff;
+            border-radius: 8px;
+            color: #18242a;
+        }
+        .alignment-diagram h3 {
+            margin: 0 0 10px;
+            color: #12362a;
+            font-size: 1rem;
+        }
+        .alignment-diagram svg {
+            display: block;
+            width: 100%;
+            max-width: 560px;
+            height: auto;
+            margin: 0 auto;
+        }
     </style>
 </head>
 <body class="chapter-mohr-bg">
@@ -44,6 +64,7 @@
         <div id="resultsCard" class="results-card" style="display: none;">
             <h2>Results</h2>
             <p id="basicResults" style="font-size: 1.1em; line-height: 1.6;"></p>
+            <div id="alignmentDiagram" class="alignment-diagram"></div>
             <button id="btnToggle" class="btn-solution-pink" onclick="toggleSolution()">Show Full Solution</button>
         </div>
         <div id="solutionCard" class="solution-container" style="display: none;"></div>
@@ -72,6 +93,6 @@
     </div>
 
 </div>
-<script src="chapter3.js"></script>
+<script src="chapter3.js?v=3"></script>
 </body>
 </html>

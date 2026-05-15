@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Binary Search Visualizer</title>
+    <style>
+        body {
+            font-family: system-ui, -apple-system, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background-color: #f4f4f9;
+            padding: 40px;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            text-align: center;
+            max-width: 600px;
+        }
+        .array-container {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin: 40px 0;
+            position: relative;
+        }
+        .array-element {
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            font-weight: bold;
+            background-color: #e2e8f0;
+            border: 2px solid #cbd5e1;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        .array-element.dimmed {
+            opacity: 0.3;
+            background-color: #f1f5f9;
+        }
+        .pointer {
+            position: absolute;
+            font-size: 14px;
+            font-weight: bold;
+            padding: 4px 8px;
+            border-radius: 4px;
+            bottom: -35px;
+            transition: all 0.3s ease;
+        }
+        .pointer.left { background-color: #fca5a5; color: #991b1b; }
+        .pointer.mid { background-color: #fde047; color: #854d0e; bottom: 60px; }
+        .pointer.right { background-color: #86efac; color: #166534; }
+        
+        .controls {
+            margin-top: 20px;
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            border: none;
+            border-radius: 6px;
+            background-color: #3b82f6;
+            color: white;
+            font-weight: bold;
+        }
+        button:hover { background-color: #2563eb; }
+        button:disabled { background-color: #94a3b8; cursor: not-allowed; }
+        #status {
+            margin-top: 20px;
+            font-size: 16px;
+            color: #334155;
+            min-height: 48px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Rotated Array Minimum (with duplicates)</h2>
+    
+    <select id="arraySelect" onchange="reset()">
+        <option value="3,1,3,3,3">[3, 1, 3, 3, 3]</option>
+        <option value="3,3,3,1,3">[3, 3, 3, 1, 3]</option>
+        <option value="2,2,2,0,1">[2, 2, 2, 0, 1]</option>
+        <option value="4,5,6,7,0,1,2">[4, 5, 6, 7, 0, 1, 2]</option>
+    </select>
+
+    <div class="array-container" id="arrayVisual"></div>
+
+    <div class="controls">
+        <button id="stepBtn" onclick="nextStep()">Next Step</button>
+        <button onclick="reset()">Reset</button>
+    </div>
+
+    <div id="status">Click "Next Step" to begin.</div>
+</div>
+
+<script>
+    let nums = [];
+    let left = 0;
+    let right = 0;
+    let mid = 0;
+    let stepState = "calc_mid"; // States: calc_mid, compare
+    let isFinished = false;
+
+    function initArray() {
+        const select = document.getElementById('arraySelect');
+        nums = select.value.split(',').map(Number);
+        left = 0;
+        right = nums.length - 1;
+        isFinished = false;
+        stepState = "calc_mid";
+        document.getElementById('stepBtn').disabled = false;
+        document.getElementById('status').innerText = "Click 'Next Step' to calculate mid.";
+        render();
+    }
+
+    function render() {
+        const container = document.getElementById('arrayVisual');
+        container.innerHTML = '';
+
+        nums.forEach((num, index) => {
+            const el = document.createElement('div');
+            el.className = 'array-element';
+            if (index < left || index > right) el.classList.add('dimmed');
+            el.innerText = num;
+
+            if (index === left) {
+                const p = document.createElement('div');
+                p.className = 'pointer left';
+                p.innerText = 'L';
+                el.appendChild(p);
+            }
+            if (index === right) {
+                const p = document.createElement('div');
+                p.className = 'pointer right';
+                p.innerText = 'R';
+                el.appendChild(p);
+            }
+            if (stepState === "compare" && index === mid && !isFinished) {
+                const p = document.createElement('div');
+                p.className = 'pointer mid';
+                p.innerText = 'M';
+                el.appendChild(p);
+            }
+
+            container.appendChild(el);
+        });
+    }
+
+    function nextStep() {
+        if (isFinished) return;
+
+        if (left >= right) {
+            isFinished = true;
+            document.getElementById('status').innerHTML = `<strong>Finished!</strong> left == right. The minimum element is ${nums[left]}.`;
+            document.getElementById('stepBtn').disabled = true;
+            render();
+            return;
+        }
+
+        if (stepState === "calc_mid") {
+            mid = Math.floor(left + (right - left) / 2);
+            document.getElementById('status').innerText = `Calculated mid at index ${mid} (value: ${nums[mid]}). Now comparing nums[mid] to nums[right] (${nums[right]}).`;
+            stepState = "compare";
+        } else if (stepState === "compare") {
+            if (nums[mid] > nums[right]) {
+                document.getElementById('status').innerText = `nums[mid] (${nums[mid]}) > nums[right] (${nums[right]}). Minimum is to the right. Setting left = mid + 1.`;
+                left = mid + 1;
+            } else if (nums[mid] < nums[right]) {
+                document.getElementById('status').innerText = `nums[mid] (${nums[mid]}) < nums[right] (${nums[right]}). Minimum is at mid or left. Setting right = mid.`;
+                right = mid;
+            } else {
+                document.getElementById('status').innerText = `nums[mid] (${nums[mid]}) == nums[right] (${nums[right]}). Cannot determine half. Shrinking search space: right = right - 1.`;
+                right--;
+            }
+            stepState = "calc_mid";
+        }
+        
+        render();
+        
+        // Auto-check for finish after a state update
+        if (left >= right) {
+            isFinished = true;
+            document.getElementById('status').innerHTML += `<br><strong>Finished!</strong> The minimum element is ${nums[left]}.`;
+            document.getElementById('stepBtn').disabled = true;
+            render();
+        }
+    }
+
+    function reset() {
+        initArray();
+    }
+8
+    // Initialize on load
+    initArray();
+</script>
+
+</body>
+</html>

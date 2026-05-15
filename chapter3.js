@@ -3,6 +3,84 @@ function num(val) {
     return parseFloat(val.toFixed(4));
 }
 
+function createAlignmentDiagram(thetaDeg, sxPrime, syPrime, txyPrime, unit) {
+    let theta = thetaDeg * (Math.PI / 180);
+    let cx = 180;
+    let cy = 150;
+    let axisLength = 118;
+    let side = 78;
+    let ux = Math.cos(theta);
+    let uy = -Math.sin(theta);
+    let vx = -Math.sin(theta);
+    let vy = -Math.cos(theta);
+
+    let point = (x, y) => `${x},${y}`;
+    let p1 = point(cx + ux * side + vx * side, cy + uy * side + vy * side);
+    let p2 = point(cx - ux * side + vx * side, cy - uy * side + vy * side);
+    let p3 = point(cx - ux * side - vx * side, cy - uy * side - vy * side);
+    let p4 = point(cx + ux * side - vx * side, cy + uy * side - vy * side);
+    let xEndX = cx + axisLength * ux;
+    let xEndY = cy + axisLength * uy;
+    let yEndX = cx + axisLength * vx;
+    let yEndY = cy + axisLength * vy;
+    let arcEndX = cx + 35 * Math.cos(theta);
+    let arcEndY = cy - 35 * Math.sin(theta);
+    let largeArc = Math.abs(thetaDeg % 360) > 180 ? 1 : 0;
+
+    return `
+        <h3>Alignment after transformation</h3>
+        <svg viewBox="0 0 360 300" role="img" aria-label="Stress element alignment after transformation">
+            <defs>
+                <marker id="arrowOriginal" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+                    <path d="M0,0 L8,4 L0,8 Z" fill="#6b7280"></path>
+                </marker>
+                <marker id="arrowRotated" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+                    <path d="M0,0 L8,4 L0,8 Z" fill="#0f766e"></path>
+                </marker>
+                <marker id="arrowStress" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+                    <path d="M0,0 L8,4 L0,8 Z" fill="#b45309"></path>
+                </marker>
+            </defs>
+
+            <line x1="46" y1="${cy}" x2="314" y2="${cy}" stroke="#9ca3af" stroke-width="2" marker-end="url(#arrowOriginal)"></line>
+            <line x1="${cx}" y1="268" x2="${cx}" y2="32" stroke="#9ca3af" stroke-width="2" marker-end="url(#arrowOriginal)"></line>
+            <text x="318" y="${cy - 8}" fill="#4b5563" font-size="14" font-weight="700">x</text>
+            <text x="${cx + 8}" y="36" fill="#4b5563" font-size="14" font-weight="700">y</text>
+
+            <polygon points="${p1} ${p2} ${p3} ${p4}" fill="#e0f2fe" stroke="#0369a1" stroke-width="2"></polygon>
+            <line x1="${cx}" y1="${cy}" x2="${xEndX}" y2="${xEndY}" stroke="#0f766e" stroke-width="3" marker-end="url(#arrowRotated)"></line>
+            <line x1="${cx}" y1="${cy}" x2="${yEndX}" y2="${yEndY}" stroke="#0f766e" stroke-width="3" marker-end="url(#arrowRotated)"></line>
+            <text x="${cx + axisLength * ux + 8}" y="${cy + axisLength * uy - 6}" fill="#0f766e" font-size="15" font-weight="800">x'</text>
+            <text x="${cx + axisLength * vx + 8}" y="${cy + axisLength * vy - 6}" fill="#0f766e" font-size="15" font-weight="800">y'</text>
+
+            <path d="M215 150 A35 35 0 ${largeArc} 0 ${arcEndX} ${arcEndY}" fill="none" stroke="#7c3aed" stroke-width="2"></path>
+            <text x="222" y="136" fill="#6d28d9" font-size="13" font-weight="700">theta = ${num(thetaDeg)} deg</text>
+
+            <line x1="${cx + ux * side}" y1="${cy + uy * side}" x2="${cx + ux * (side + 32)}" y2="${cy + uy * (side + 32)}" stroke="#b45309" stroke-width="2.5" marker-end="url(#arrowStress)"></line>
+            <line x1="${cx + vx * side}" y1="${cy + vy * side}" x2="${cx + vx * (side + 32)}" y2="${cy + vy * (side + 32)}" stroke="#b45309" stroke-width="2.5" marker-end="url(#arrowStress)"></line>
+            <text x="18" y="262" fill="#7c2d12" font-size="12.5" font-weight="700">
+                <tspan x="18" dy="0">sigma x' = ${num(sxPrime)} ${unit}</tspan>
+                <tspan x="18" dy="17">sigma y' = ${num(syPrime)} ${unit}, tau x'y' = ${num(txyPrime)} ${unit}</tspan>
+            </text>
+        </svg>
+    `;
+}
+
+function showAlignmentDiagram(thetaDeg, sxPrime, syPrime, txyPrime, unit) {
+    let diagram = document.getElementById("alignmentDiagram");
+    let results = document.getElementById("basicResults");
+
+    if (!diagram && results) {
+        results.insertAdjacentHTML("afterend", `<div id="alignmentDiagram" class="alignment-diagram"></div>`);
+        diagram = document.getElementById("alignmentDiagram");
+    }
+
+    if (diagram) {
+        diagram.innerHTML = createAlignmentDiagram(thetaDeg, sxPrime, syPrime, txyPrime, unit);
+        diagram.style.display = "block";
+    }
+}
+
 // ================= CALCULATOR 1: STRESS TRANSFORMATION =================
 
 function calculateTransformation() {
@@ -33,6 +111,7 @@ function calculateTransformation() {
         Transformed σ<sub>y'</sub> : ${num(sy_prime)} ${unit}<br>
         Transformed τ<sub>x'y'</sub> : ${num(txy_prime)} ${unit}
     `;
+    showAlignmentDiagram(th, sx_prime, sy_prime, txy_prime, unit);
 
     let solHTML = `
         <h2 style="color: #2c3e50;">Solution Steps:</h2>
